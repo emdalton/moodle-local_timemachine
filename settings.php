@@ -17,15 +17,15 @@
 /**
  * Add page to admin menu.
  *
- * @package    local_anonymise
- * @copyright  Gavin Henrick
+ * @package    local_timemachine
+ * @copyright  Elizabeth Dalton
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-    $ADMIN->add('development', new admin_externalpage('local_anonymise',
-            get_string('pluginname', 'local_anonymise'),
-            new moodle_url('/local/anonymise/index.php')));
+    $ADMIN->add('development', new admin_externalpage('local_timemachine',
+            get_string('pluginname', 'local_timemachine'),
+            new moodle_url('/local/timemachine/index.php')));
 }

@@ -17,15 +17,15 @@
 /**
  * Version details.
  *
- * @package    local_anonymize
- * @copyright  Gavin Henrick 2016
+ * @package    local_timemachine
+ * @copyright  Elizabeth Dalton 2019
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016030400;
-$plugin->requires  = 2014051200; // Moodle 2.7.
+$plugin->version   = 2019103000;
+$plugin->requires  = 2019052000; // Moodle 3.8.
 $plugin->maturity  = MATURITY_BETA;
-$plugin->release   = 'Version for Moodle 2.7 onwards';
-$plugin->component = 'local_anonymise';
+$plugin->release   = 'Version for Moodle 3.8 onwards';
+$plugin->component = 'local_timemachine';
