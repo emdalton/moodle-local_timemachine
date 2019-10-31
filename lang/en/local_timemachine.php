@@ -21,6 +21,9 @@
 
 $string['timemachine'] = 'Time machine';
 $string['timestamps'] = 'Timeshift all bigint columns where the column name includes \'date\' or \'time\' (except those identified for exclusion)';
+$string['timeshiftnewer'] = 'Shifts the dates forward so the site appears to be newer than it was before the shift';
+$string['timeshiftolder'] = 'Shifts the dates backward so the site appears to be older than it was before the shift';
+$string['timeshiftdays'] = 'The number of days to shift the site. Must be a postive integer.';
 $string['done'] = 'Done';
 $string['nodebuggingmaintenancemode'] = '<a href="{$a->debugging}" target="_blank">\'Debugging mode\'</a> setting must be set to \'DEVELOPER\' and <a href="{$a->maintenance}" target="_blank">\'Maintenance mode\'</a> should be enabled to run the Timemachine plugin. This protects production sites from being changed unintentionally';
 $string['nodebuggingmaintenancemodecli'] = '\'Debugging mode\' setting must be set to \'DEVELOPER\' and \'Maintenance mode\' should be enabled to run the Timemachine plugin. This protects production sites from being changed unintentionally';

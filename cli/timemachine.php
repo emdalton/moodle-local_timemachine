@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Anonymise personal identifiers
+ * timemachine personal identifiers
  *
- * @package    local_anonymise
- * @copyright  2016 David Monllao
+ * @package    local_timemachine
+ * @copyright  2019 Elizabeth Dalton
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,20 +27,13 @@ define('CLI_SCRIPT', true);
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot . '/local/anonymise/locallib.php');
+require_once($CFG->dirroot . '/local/timemachine/locallib.php');
 
 list($options, $unrecognized) = cli_get_params(
     array(
-        'all' => false,
-        'activities' => false,
-        'categories' => false,
-        'courses' => false,
-        'site' => false,
-        'files' => false,
-        'users' => false,
-        'password' => false,
-        'admin' => false,
-        'others' => false,
+        'newer' => false,
+        'older' => false,
+        'days' => 0,
         'help' => false
     ), array(
         'h' => 'help'
@@ -53,23 +46,16 @@ if ($unrecognized) {
 }
 
 $help =
-"Anonymises your site
+"Shifts the timestamps on your site by the specified number of days. 
 
 Options:
---all               Anonymise the whole site (includes all options below)
---activities        Anonymise activities
---categories        Anonymise categories
---courses           Anonymise courses
---site              Anonymise site home course
---files             Anonymise files
---users             Anonymise users
---password          Reset user passwords
---admin             Anonymise default administrator (except username and password)
---others            Anonymise all other potentially sensitive contents
+--newer             Shifts the dates forward so the site appears to be newer than it was before the shift
+--older             Shifts the dates backward so the site appears to be older than it was before the shift
+--days              The number of days to shift the site. Must be a postive integer. The default is 0 (does nothing).
 -h, --help          Print out this help
 
 Example:
-\$sudo -u www-data /usr/bin/php local/anonymise/cli/anonymise.php --all
+\$sudo -u www-data /usr/bin/php local/timemachine/cli/timemachine.php --newer --days 365
 ";
 
 
@@ -78,7 +64,7 @@ if ($options['help']) {
     exit(0);
 }
 if (!debugging() || (empty($CFG->maintenance_enabled) && !file_exists("$CFG->dataroot/climaintenance.html"))) {
-    echo $OUTPUT->notification(get_string('nodebuggingmaintenancemodecli', 'local_anonymise'));
+    echo $OUTPUT->notification(get_string('nodebuggingmaintenancemodecli', 'local_timemachine'));
     exit(1);
 }
 
@@ -88,46 +74,20 @@ if (count($unique) === 1 && reset($unique) === false) {
     exit(0);
 }
 
-// Enable them all.
-if ($options['all'] === true) {
-    foreach ($options as $key => $option) {
-        $options[$key] = true;
-    }
-}
-
 
 // Allow more time for long query runs.
 set_time_limit(0);
 
 // Exectute anonmisation based on selections.
-if ($options['activities']) {
-    echo $OUTPUT->heading(get_string('activities', 'local_anonymise'), 3);
-    anonymise_activities();
+if ($options['newer']) {
+    echo $OUTPUT->heading(get_string('newer', 'local_timemachine'), 3);
+    timeshift_all($options['days']);
 }
 
-if ($options['categories']) {
-    echo $OUTPUT->heading(get_string('categories', 'local_anonymise'), 3);
-    anonymise_categories();
+if ($options['older']) {
+    echo $OUTPUT->heading(get_string('categories', 'local_timemachine'), 3);
+    timeshift_all(-1*$options['days']);
 }
 
-if ($options['courses']) {
-    echo $OUTPUT->heading(get_string('courses', 'local_anonymise'), 3);
-    anonymise_courses($options['site']);
-}
-
-if ($options['files']) {
-    echo $OUTPUT->heading(get_string('files', 'local_anonymise'), 3);
-    anonymise_files();
-}
-
-if ($options['users']) {
-    echo $OUTPUT->heading(get_string('users', 'local_anonymise'), 3);
-    anonymise_users($options['password'], $options['admin']);
-}
-
-if ($options['others']) {
-    echo $OUTPUT->heading(get_string('others', 'local_anonymise'), 3);
-    anonymise_others($options['activities'], $options['password']);
-}
 
 exit(0);

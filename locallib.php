@@ -51,9 +51,16 @@ class local_timemachine_form extends moodleform {
         $mform->addElement('hidden', 'sesskey', sesskey());
         $mform->setType('action', PARAM_BOOL);
 
-        $mform->addElement('checkbox', 'timestamps', get_string('timestamps', 'local_timeshift'));
-        $mform->setType('timestamps', PARAM_BOOL);
+        $radioarray=array();
+        $radioarray[] = $mform->createElement('radio', 'oldnew', '', get_string('timeshiftnewer', 'local_timeshift'), 1);
+        $radioarray[] = $mform->createElement('radio', 'oldnew', '', get_string('timeshiftolder', 'local_timeshift'), 0);
+        $mform->setDefault('oldnew', 0);
+        $mform->addGroup($radioarray, 'oldnewarray', '', array(' '), false);
+        $mform->setType('oldnew', PARAM_BOOL);
 
+        $mform->addElement('text', 'days', get_string('timeshiftdays', 'local_timeshift'), $attributes);
+        $mform->setType('days', PARAM_INT);
+       
         $mform->addElement('submit', 'submitbutton', get_string('timeshift', 'local_timeshift'));
     }
 }
@@ -66,7 +73,7 @@ class local_timemachine_form extends moodleform {
  * @access public
  * @return void
  */
-function timeshift_all($timeshiftall, $timeshiftpassword) {
+function timeshift_all($timeshiftdays) {
     global $DB;
 
     // Some bigint fields with names including time or date are not timestamps.
@@ -97,12 +104,12 @@ function timeshift_all($timeshiftall, $timeshiftpassword) {
             }
             // create array entry for all listed timestamps.
             if (!empty($timestamps[$tablename]) && !empty($timestamps[$tablename][$columnname])) {
-                $toupdate[$columnname] = (object)['vartype' => $column->type, 'max' => $column->max_length];
+                $toupdate[$columnname] = (object)['vartype' => $column->type];
             }
         }
         // Update all table records if there is any timestamp column that should be shifted.
         if (!empty($toupdate)) {
-            timeshift_table_records($tablename, $toupdate);
+            timeshift_table_records($tablename, $toupdate, $timeshiftdays);
         }
     }
     purge_all_caches();
@@ -110,7 +117,7 @@ function timeshift_all($timeshiftall, $timeshiftpassword) {
 
 }
 
-function timeshift_table_records($tablename, $columns) {
+function timeshift_table_records($tablename, $columns, $timeshiftdays) {
     global $DB;
 
 // need to get value for shiftdays
@@ -119,7 +126,7 @@ function timeshift_table_records($tablename, $columns) {
         $sql = "UPDATE {" . $tablename . "} SET " . $column . " = CASE
             WHEN " . $column . " IS NULL THEN NULL
             WHEN " . $DB->sql_length($column) . " = 0 THEN '0'
-            ELSE " . $timestamp + $shiftdays*60*60*24 . "
+            ELSE " . $timestamp + $timeshiftdays*60*60*24 . "
         END";
         $DB->execute($sql);
     }
