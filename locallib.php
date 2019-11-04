@@ -52,16 +52,16 @@ class local_timemachine_form extends moodleform {
         $mform->setType('action', PARAM_BOOL);
 
         $radioarray=array();
-        $radioarray[] = $mform->createElement('radio', 'oldnew', '', get_string('timeshiftnewer', 'local_timeshift'), 1);
-        $radioarray[] = $mform->createElement('radio', 'oldnew', '', get_string('timeshiftolder', 'local_timeshift'), 0);
+        $radioarray[] = $mform->createElement('radio', 'oldnew', '', get_string('timeshiftnewer', 'local_timemachine'), 1);
+        $radioarray[] = $mform->createElement('radio', 'oldnew', '', get_string('timeshiftolder', 'local_timemachine'), 0);
         $mform->setDefault('oldnew', 0);
         $mform->addGroup($radioarray, 'oldnewarray', '', array(' '), false);
         $mform->setType('oldnew', PARAM_BOOL);
 
-        $mform->addElement('text', 'days', get_string('timeshiftdays', 'local_timeshift'), $attributes);
+        $mform->addElement('text', 'days', get_string('timeshiftdays', 'local_timemachine'));
         $mform->setType('days', PARAM_INT);
        
-        $mform->addElement('submit', 'submitbutton', get_string('timeshift', 'local_timeshift'));
+        $mform->addElement('submit', 'submitbutton', get_string('timeshiftgo', 'local_timemachine'));
     }
 }
 
@@ -79,9 +79,6 @@ function timeshift_all($timeshiftdays) {
     // Some bigint fields with names including time or date are not timestamps.
     $excludedcolumns = get_excluded_timestamp_columns();
 
-    // List of timestamp fields to timeshift, already excluded possible fields that are not timestamps
-    $timestamps = get_timestamp_fields_to_update();
-       debugging('Iterating through all db tables clearing bigint fields with names containing time or date fields.', DEBUG_DEVELOPER);
 
     // Iterate through all system tables and shift timestamp fields.
     // No cache to refresh the list as we deleted some tables in this script.
@@ -89,7 +86,7 @@ function timeshift_all($timeshiftdays) {
     $tables = $DB->get_tables(false);
     foreach ($tables as $tablename) {
         if (!debugging('', DEBUG_DEVELOPER)) {
-            echo BLOCK_CHAR . ' ';
+            echo BLOCK_CHAR . 'debug test';
         }
         $toupdate = array();
         $columns = $DB->get_columns($tablename, false);
@@ -99,11 +96,7 @@ function timeshift_all($timeshiftdays) {
                 continue;
             }
             // datestamp fields are any bigint fields where name includes text 'date' or 'time', all of them but the excluded ones.
-            if (($column->type === 'bigint') && (strstr($columname,'date') || strstr($columname,'date') )) {
-                $toupdate[$columnname] = (object)['vartype' => $column->type];
-            }
-            // create array entry for all listed timestamps.
-            if (!empty($timestamps[$tablename]) && !empty($timestamps[$tablename][$columnname])) {
+            if (($column->type === 'bigint') && (strstr($columnname,'time') || strstr($columnname,'date') )) {
                 $toupdate[$columnname] = (object)['vartype' => $column->type];
             }
         }
@@ -120,13 +113,17 @@ function timeshift_all($timeshiftdays) {
 function timeshift_table_records($tablename, $columns, $timeshiftdays) {
     global $DB;
 
-// need to get value for shiftdays
+ // need to get value for shiftdays
+   $timeshiftseconds = $timeshiftdays*60*60*24;
+ 
+  
     foreach ($columns as $column => $colinfo) {
+    	//echo BLOCK_CHAR . "\n shifting column " . $tablename . " " . $column . " by number of days = ". $timeshiftdays;
 
         $sql = "UPDATE {" . $tablename . "} SET " . $column . " = CASE
             WHEN " . $column . " IS NULL THEN NULL
             WHEN " . $DB->sql_length($column) . " = 0 THEN '0'
-            ELSE " . $timestamp + $timeshiftdays*60*60*24 . "
+            ELSE " . $column . "+" . $timeshiftseconds . "
         END";
         $DB->execute($sql);
     }
@@ -141,7 +138,6 @@ function assign_if_not_null(&$object, $field, $newvalue) {
         $object->$field = $newvalue;
     }
 }
-
 
 
 function get_excluded_timestamp_columns() {

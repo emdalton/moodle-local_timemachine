@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019103000;
+$plugin->version   = 2019103005;
 $plugin->requires  = 2019052000; // Moodle 3.8.
 $plugin->maturity  = MATURITY_BETA;
 $plugin->release   = 'Version for Moodle 3.8 onwards';

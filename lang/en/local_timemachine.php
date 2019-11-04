@@ -1,5 +1,4 @@
 <?php
-// This file is part of the mee_cycles plugin for Moodle
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,5 +29,5 @@ $string['nodebuggingmaintenancemodecli'] = '\'Debugging mode\' setting must be s
 $string['pluginname'] = 'Timemachine';
 $string['purgelink'] = 'purge caches';
 $string['purgeprompt'] = 'In order to finalise the time shift, you should';
-$string['timeshift'] = 'Timeshift all bigint columns where the column name includes \'date\' or \'time\' (except those identified for exclusion)';
-$string['warning'] = '<strong>WARNING:</strong> This will alter data across your whole site. <br/><br/>The web interface is not recommended, this is a heavy process and it can get stucked if your site is big. Please, use the CLI interface (local/timemachine/cli/timemachine.php).';
+$string['timeshiftgo'] = 'Timeshift!';
+$string['warning'] = '<strong>WARNING: This will alter data across your whole site.</strong> <br/><br/>The web interface is not recommended, as this is a heavy process and it can get stuck if your site is big. Please, use the CLI interface (local/timemachine/cli/timemachine.php).';

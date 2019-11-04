@@ -51,13 +51,17 @@ $help =
 Options:
 --newer             Shifts the dates forward so the site appears to be newer than it was before the shift
 --older             Shifts the dates backward so the site appears to be older than it was before the shift
---days              The number of days to shift the site. Must be a postive integer. The default is 0 (does nothing).
+--days              Required: The number of days to shift the site. Must be a postive integer. A value of 0 does nothing.
 -h, --help          Print out this help
 
 Example:
 \$sudo -u www-data /usr/bin/php local/timemachine/cli/timemachine.php --newer --days 365
 ";
 
+if ($options['days'] === false) {
+    echo $help;
+    exit(0);
+}
 
 if ($options['help']) {
     echo $help;
@@ -80,12 +84,12 @@ set_time_limit(0);
 
 // Exectute anonmisation based on selections.
 if ($options['newer']) {
-    echo $OUTPUT->heading(get_string('newer', 'local_timemachine'), 3);
+    echo $OUTPUT->heading(get_string('timeshiftnewer', 'local_timemachine'), 3);
     timeshift_all($options['days']);
 }
 
 if ($options['older']) {
-    echo $OUTPUT->heading(get_string('categories', 'local_timemachine'), 3);
+    echo $OUTPUT->heading(get_string('timeshiftolder', 'local_timemachine'), 3);
     timeshift_all(-1*$options['days']);
 }
 
