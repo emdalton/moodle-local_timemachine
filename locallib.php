@@ -123,6 +123,7 @@ function timeshift_table_records($tablename, $columns, $timeshiftdays) {
         $sql = "UPDATE {" . $tablename . "} SET " . $column . " = CASE
             WHEN " . $column . " IS NULL THEN NULL
             WHEN " . $DB->sql_length($column) . " = 0 THEN '0'
+            WHEN " . $column . "+" . $timeshiftseconds . " > NOW THEN 'NOW'
             ELSE " . $column . "+" . $timeshiftseconds . "
         END";
         $DB->execute($sql);
