@@ -79,7 +79,6 @@ function timeshift_all($timeshiftdays) {
     // Some bigint fields with names including time or date are not timestamps.
     $excludedcolumns = get_excluded_timestamp_columns();
 
-
     // Iterate through all system tables and shift timestamp fields.
     // No cache to refresh the list as we deleted some tables in this script.
 
@@ -107,7 +106,6 @@ function timeshift_all($timeshiftdays) {
     }
     purge_all_caches();
 
-
 }
 
 function timeshift_table_records($tablename, $columns, $timeshiftdays) {
@@ -123,7 +121,7 @@ function timeshift_table_records($tablename, $columns, $timeshiftdays) {
         $sql = "UPDATE {" . $tablename . "} SET " . $column . " = CASE
             WHEN " . $column . " IS NULL THEN NULL
             WHEN " . $DB->sql_length($column) . " = 0 THEN '0'
-            WHEN " . $column . "+" . $timeshiftseconds . " > NOW() THEN NOW()
+            WHEN " . $column . "+" . $timeshiftseconds . " > UNIX_TIMESTAMP() THEN UNIX_TIMESTAMP()
             ELSE " . $column . "+" . $timeshiftseconds . "
         END";
         $DB->execute($sql);

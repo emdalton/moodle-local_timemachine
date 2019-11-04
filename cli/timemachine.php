@@ -84,12 +84,12 @@ set_time_limit(0);
 
 // Exectute anonmisation based on selections.
 if ($options['newer']) {
-    echo $OUTPUT->heading(get_string('timeshiftnewer', 'local_timemachine'), 3);
+    echo $OUTPUT->heading(get_string('timeshiftnewer', 'local_timemachine') . " Shifting by " . $options['days'] .' days', 3);
     timeshift_all($options['days']);
 }
 
 if ($options['older']) {
-    echo $OUTPUT->heading(get_string('timeshiftolder', 'local_timemachine'), 3);
+    echo $OUTPUT->heading(get_string('timeshiftolder', 'local_timemachine') . " Shifting by " . $options['days'] .' days', 3);
     timeshift_all(-1*$options['days']);
 }
 
